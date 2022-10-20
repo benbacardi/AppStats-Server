@@ -1,0 +1,25 @@
+{% load humanize %}
+{% load appstats %}
+
+<div class="card bg-light">
+  <div class="card-header fw-bold d-flex justify-content-between">
+    <span>Count by App Version</span>
+  </div>
+  <ul class="list-group list-group-flush">
+    {% for app_version_info, count in object.active_count_per_app_version|sort_by_value %}
+    {% with app_version=app_version_info.0 build_number=app_version_info.1 %}
+      <li class="list-group-item d-flex justify-content-between bg-info"
+      style="
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.75) {% widthratio count object_total 100 %}%, white {% widthratio count object_total 100 %}%, white 100%);
+      "
+      >
+        <span>{{ app_version }} <small class="text-muted">{{ build_number }}</small></span>
+        <span>
+          <span class="absolute">{{ count|intcomma }}</span>
+          <span class="percentage d-none">{% widthratio count object_total 100 %}</span>
+        </span>
+      </li>
+    {% endwith %}
+    {% endfor %}
+  </ul>
+</div>

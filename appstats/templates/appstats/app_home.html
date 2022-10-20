@@ -1,0 +1,75 @@
+{% extends "appstats/base.html" %}
+{% load humanize %}
+{% load appstats %}
+
+{% block title %}{{ app.name }}{% endblock %}
+
+{% block content %}
+{% with object_total=app.active_installs.count %}
+
+  <h1>{{ app.name }} <span class="badge bg-info me-2">{{ object_total|intcomma }}</span></h1>
+
+  <div class="row mt-5">
+
+    <div class="col-12 col-md-6 col-lg-4">
+      {% include "appstats/_includes/by_model.html" with object=app %}
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4">
+      {% include "appstats/_includes/by_app_version.html" with object=app %}
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4">
+      {% include "appstats/_includes/by_os.html" with object=app %}
+    </div>
+
+  </div>
+
+  <div class="row mt-4">
+
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card bg-light">
+        <div class="card-header text-center">Counters</div>
+        <div class="list-group list-group-flush">
+          {% for counter in app.counters.all %}
+            <a href="{% url "appstats.counter" app_slug=app.slug counter_name=counter.name %}" class="list-group-item list-group-item-action d-flex justify-content-between">
+              <span>{{ counter.name }}</span>
+              <span>{{ counter.total|intcomma }}</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card bg-light">
+        <div class="card-header text-center">Gauges</div>
+        <ul class="list-group list-group-flush">
+          {% for gauge in app.gauges.all %}
+            <a href="{% url "appstats.gauge" app_slug=app.slug gauge_name=gauge.name %}" class="list-group-item list-group-item-action d-flex justify-content-between">
+              <span>{{ gauge.name }}</span>
+              <span>{{ gauge.total|intcomma }}</span>
+            </a>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card bg-light">
+        <div class="card-header text-center">Events</div>
+        <ul class="list-group list-group-flush">
+          {% for event in app.events.all %}
+            <a href="{% url "appstats.event" app_slug=app.slug event_name=event.name %}" class="list-group-item list-group-item-action d-flex justify-content-between">
+              <span>{{ event.name }}</span>
+              <span>{{ event.total|intcomma }}</span>
+            </a>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+{% endwith %}
+{% endblock %}

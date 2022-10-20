@@ -1,0 +1,29 @@
+{% extends "appstats/base.html" %}
+{% load humanize %}
+{% load appstats %}
+
+{% block title %}Event {{ event.name }}: {{ app.name }}{% endblock %}
+
+{% block content %}
+{% with object_total=event.total %}
+
+  <h1>{{ event.name }} <span class="badge bg-info me-2">{{ object_total|intcomma }}</span></h1>
+
+  <div class="row mt-5">
+
+    <div class="col-12 col-md-6 col-lg-4">
+      {% include "appstats/_includes/by_model.html" with object=event %}
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4">
+      {% include "appstats/_includes/by_app_version.html" with object=event %}
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4">
+      {% include "appstats/_includes/by_os.html" with object=event %}
+    </div>
+
+  </div>
+
+{% endwith %}
+{% endblock %}

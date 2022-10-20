@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block title %}{% endblock %} - AppStats</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+  <style>
+    .breadcrumb-item a { text-decoration: none; }
+  </style>
+
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+    <div class="container">
+      <a class="navbar-brand" href="/">AppStats</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="appDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              {% if app %}{{ app.name }}{% else %}Choose an App{% endif %}
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="appDropDown">
+              {% for app in APPS %}
+              <li><a class="dropdown-item" href="{% url "appstats.app_home" app_slug=app.slug %}">{{ app.name }}</a></li>
+              {% endfor %}
+            </ul>
+          </li>
+          {% if app %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="metricDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              {% if counter %}Counter: {{ counter.name }}{% endif %}
+              {% if gauge %}Gauge: {{ gauge.name }}{% endif %}
+              {% if event %}Event: {{ event.name }}{% endif %}
+              {% if not counter and not gauge and not event %}Metrics{% endif %}
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="metricDropDown">
+              {% if app.counters.exists %}
+                <li><h6 class="dropdown-header">Counters</h6></li>
+                {% for counter in app.counters.all %}
+                <li><a class="dropdown-item" href="{% url "appstats.counter" app_slug=app.slug counter_name=counter.name %}">{{ counter.name }}</a></li>
+                {% endfor %}
+              {% endif %}
+              {% if app.gauges.exists %}
+                <li><h6 class="dropdown-header">Gauges</h6></li>
+                {% for gauge in app.gauges.all %}
+                <li><a class="dropdown-item" href="{% url "appstats.gauge" app_slug=app.slug gauge_name=gauge.name %}">{{ gauge.name }}</a></li>
+                {% endfor %}
+              {% endif %}
+              {% if app.events.exists %}
+                <li><h6 class="dropdown-header">Events</h6></li>
+                {% for event in app.events.all %}
+                <li><a class="dropdown-item" href="{% url "appstats.event" app_slug=app.slug event_name=event.name %}">{{ event.name }}</a></li>
+                {% endfor %}
+              {% endif %}
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    {% if counter or gauge or event %}
+      <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '›';">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url "appstats.app_home" app_slug=app.slug %}">{{ app.name }}</a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            {% if counter %}Counter: {{ counter.name }}{% endif %}
+            {% if gauge %}Gauge: {{ gauge.name }}{% endif %}
+            {% if event %}Event: {{ event.name }}{% endif %}
+          </li>
+        </ol>
+      </nav>
+      <hr>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+  <script type="text/javascript">
+
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+
+  </script>
+
+</body>
+
+</html>

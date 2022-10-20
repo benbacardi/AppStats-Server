@@ -1,0 +1,23 @@
+{% load humanize %}
+{% load appstats %}
+
+<div class="card bg-light">
+  <div class="card-header fw-bold d-flex justify-content-between">
+    <span>Count by Model</span>
+  </div>
+  <ul class="list-group list-group-flush">
+    {% for model, count in object.active_count_per_model|sort_by_value %}
+      <li class="list-group-item d-flex justify-content-between bg-info"
+      style="
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.75) {% widthratio count object_total 100 %}%, white {% widthratio count object_total 100 %}%, white 100%);
+      "
+      >
+        <span>{{ model|verbose_model_name }} {% if model|verbose_model_name != model %}<small class="text-muted ms-2">{{ model }}</small>{% endif %}</span>
+        <span>
+          <span class="absolute">{{ count|intcomma }}</span>
+          <span class="percentage d-none">{% widthratio count object_total 100 %}</span>
+        </span>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
