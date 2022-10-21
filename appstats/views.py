@@ -20,10 +20,6 @@ def app_home(request, app_slug):
     app = get_object_or_404(App, slug=app_slug)
     return render(request, "appstats/app_home.html", {
         "app": app,
-        "by_model": app.active_installs_by_parameter("model"),
-        "by_app_version": app.active_installs_by_parameter("app_version", "build_number"),
-        "by_os_name": app.active_installs_by_parameter("os_name"),
-        "by_os_version": app.active_installs_by_parameter("os_name", "os_version"),
     })
 
 
